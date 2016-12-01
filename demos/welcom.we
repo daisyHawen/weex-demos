@@ -1,0 +1,140 @@
+<template>
+<!-- 一个欢迎首页 -->
+  <div class="container">
+    <div class="cell">
+        <image class="thumb" src="https://github.com/daisyHawen/weex-demos/blob/master/img/1.png?raw=true"></image>
+        <!-- <text  class="title">Welcome Translator!</text>        -->
+    </div>
+    <!--    <wxc-panel class="panel" title="Transform" type="primary">    
+      <wxc-button value="Transform" onclick="{{transform}}" type="success" size="middle"
+                 style="margin-top:12px;"></wxc-button>
+    </wxc-panel> -->
+     <wxc-button onclick="{{rotate}}" type="success" size="middle" style="margin-top:12px; width:100;height:10;"></wxc-button>
+     <div id="block" class="block" style="transform-origin:{{transformOrigin}}">
+        <text class="block-txt">Welcome Translator!</text>
+     </div>
+  </div>
+</template>
+
+<style>
+  .panel{position: relative;}
+  .cell { flex-direction: row;position: absolute; top:0; }
+  .thumb { width: 500; height: 500; position: absolute; left:0; top: 0;}
+  .title { text-align: center; flex: 1; color: grey; font-size: 20; position: absolute; left:10; top: 150 }
+  .block {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: 100px;
+    left: 200px;
+    /*background-color: #F0AD4E;*/
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8
+  }
+  .block-txt {
+    color: #FFFFFF;
+    font-size: 20px;
+  }
+</style>
+<script>
+	 require('weex-components');
+  module.exports = {
+    data: {
+      transformOrigin: 'center center',
+      current_rotate: 0,
+      current_scale: 1,
+      current_color: '#FF0000',
+      current_opacity: 1,
+      current_translate: '',
+      current_transform: '',
+      isStop: true
+    },
+    methods: {
+      anim: function(styles, timingFunction, duration, callback) {
+        this.$call('animation', 'transition', this._ids.block.el.ref, {
+          styles: styles,
+          timingFunction: timingFunction,
+          duration: duration
+        }, callback);
+      },
+      rotate: function() {
+        var self = this;
+        self.current_rotate += 180;
+        self.anim({
+          transform: 'rotate(' + self.current_rotate + 'deg)'
+        }, 'ease-in-out', 400, function() {
+          if (self.current_rotate === 360) {
+            self.current_rotate = 0;
+          }
+          else {
+            self.rotate();
+          }
+        });
+      },
+      translate: function() {
+        this.current_translate = this.current_translate ? '' : 'translate(50%, 50%)';
+        this.anim({
+          transform: this.current_translate
+        }, 'ease-in', 500, function() {
+        });
+      },
+      scale: function() {
+        var self = this;
+        self.current_scale = self.current_scale === 2 ? .5 : 2
+        self.anim({
+          transform: 'scale(' + self.current_scale + ')'
+        }, 'linear', 500, function() {
+        });
+      },
+      transform: function() {
+        var self = this;
+        this.current_transform = this.current_transform ? '' : 'rotate(180deg) scale(1.5)';
+        this.anim({
+          transform: this.current_transform,
+          transformOrigin: 'left top'
+        }, 'ease-out', 500, function() {
+          if (self.current_transform !== '') {
+            self.anim({
+              transform: 'rotate(0deg) scale(1.2)',
+              transformOrigin: 'left top'
+            }, 'ease-out', 500, function() {
+            })
+          }
+          else {
+
+          }
+        });
+      },
+      composite: function() {
+        var self = this;
+        self.current_transform = self.current_transform ? '' : 'rotate(45deg) scale(1.5) translate(50%, 50%)';
+        self.current_color = self.current_color === '#F0AD4E' ? '#D9534F' : '#F0AD4E';
+        self.current_opacity = self.current_opacity === 1 ? 0.1 : 1;
+        this.anim({
+          transform: this.current_transform,
+          transformOrigin: 'left top',
+          backgroundColor: self.current_color,
+          opacity: self.current_opacity
+        }, 'ease-out', 1000, function() {
+        });
+      },
+      color: function() {
+        var self = this;
+        self.current_color = self.current_color === '#F0AD4E' ? '#D9534F' : '#F0AD4E';
+        self.anim({
+          backgroundColor: self.current_color
+        }, 'linear', 500, function() {
+        });
+      },
+      opacity: function() {
+        var self = this;
+        self.current_opacity = self.current_opacity === 1 ? 0.1 : 1;
+        self.anim({
+          opacity: self.current_opacity
+        }, 'linear', 500, function() {
+        });
+      }
+    }
+  };
+</script>

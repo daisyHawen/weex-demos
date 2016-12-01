@@ -1,0 +1,60 @@
+<template>
+  <scroller>
+    <wxc-panel style="" title="查询" type="primary">
+    <div id="block" class="block">
+       <input
+        type="text"
+        placeholder="Please enter words"
+        class="input"
+        autofocus="true"
+        value=""
+        onchange="onchange"
+        oninput="oninput"
+      />
+    </div>
+     <div>
+        <image class="thumb" src="https://github.com/daisyHawen/weex-demos/blob/master/img/1.png?raw=true"></image>
+     </div>
+      <text>oninput: {{txtInput}}</text>
+      <text>onchange: {{txtChange}}</text>
+    </wxc-panel>
+  </scroller>
+</template>
+
+<style>
+  .block {
+    width: 505px;
+    height: 85px;
+    left: 50px;
+    background-color: #F0AD4E;
+    align-items: center;
+    justify-content: center;
+  }
+  .thumb { width: 500; height: 500; position: absolute; left:50; top: 0;}
+  .input {
+    position: absolute;
+    font-size: 40px;
+    height: 80px;
+    width: 500px;
+  }
+</style>
+
+<script>
+  require('weex-components');
+  module.exports = {
+    data: {
+      txtInput: '',
+      txtChange: ''
+    },
+    methods: {
+      onchange: function(event) {
+        this.txtChange = event.value;
+        console.log('onchange', event.value);
+      },
+      oninput: function(event) {
+        this.txtInput = event.value;
+        console.log('oninput', event.value);
+      }
+    }
+  };
+</script>
