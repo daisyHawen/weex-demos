@@ -71,10 +71,23 @@
 	  "type": "scroller",
 	  "children": [
 	    {
-	      "type": "wxc-panel",
-	      "attr": {
-	        "title": "查询",
-	        "type": "primary"
+	      "type": "div",
+	      "classList": [
+	        "header"
+	      ],
+	      "children": [
+	        {
+	          "type": "text",
+	          "attr": {
+	            "value": "查询"
+	          }
+	        }
+	      ]
+	    },
+	    {
+	      "type": "div",
+	      "style": {
+	        "height": function () {return (this.deviceHeight) + 'px'}
 	      },
 	      "children": [
 	        {
@@ -117,16 +130,24 @@
 	          ]
 	        },
 	        {
-	          "type": "text",
-	          "attr": {
-	            "value": function () {return 'oninput: ' + (this.txtInput)}
-	          }
-	        },
-	        {
-	          "type": "text",
-	          "attr": {
-	            "value": function () {return 'onchange: ' + (this.txtChange)}
-	          }
+	          "type": "div",
+	          "classList": [
+	            "box"
+	          ],
+	          "children": [
+	            {
+	              "type": "text",
+	              "attr": {
+	                "value": function () {return 'oninput: ' + (this.txtInput)}
+	              }
+	            },
+	            {
+	              "type": "text",
+	              "attr": {
+	                "value": function () {return 'onchange: ' + (this.txtChange)}
+	              }
+	            }
+	          ]
 	        }
 	      ]
 	    }
@@ -138,26 +159,40 @@
 /***/ function(module, exports) {
 
 	module.exports = {
+	  "header": {
+	    "width": 750,
+	    "height": 100,
+	    "border": "1px solid #F0AD4E",
+	    "backgroundColor": "#CCCCCC",
+	    "color": "#ffffff"
+	  },
+	  "box": {
+	    "width": 750,
+	    "height": 600,
+	    "border": "1px solid #F0AD4E",
+	    "position": "absolute",
+	    "left": 0,
+	    "top": 80
+	  },
 	  "block": {
-	    "width": 505,
+	    "width": 750,
 	    "height": 85,
-	    "left": 50,
 	    "backgroundColor": "#F0AD4E",
 	    "alignItems": "center",
 	    "justifyContent": "center"
 	  },
 	  "thumb": {
-	    "width": 500,
+	    "width": 750,
 	    "height": 500,
 	    "position": "absolute",
-	    "left": 50,
 	    "top": 0
 	  },
 	  "input": {
 	    "position": "absolute",
 	    "fontSize": 40,
 	    "height": 80,
-	    "width": 500
+	    "width": 500,
+	    "alignItems": "center"
 	  }
 	}
 
@@ -171,8 +206,19 @@
 	module.exports = {
 	  data: function () {return {
 	    txtInput: '',
-	    txtChange: ''
+	    txtChange: '',
+	    deviceHeight: 1024
 	  }},
+	  created: function created() {
+	    var self = this;
+	    this.$on('navRightClick', function (e) {
+	      self.showMenu = true;
+	    });
+
+	    this.$getConfig(function (config) {
+	      self.deviceHeight = 750 / config.env.deviceWidth * config.env.deviceHeight;
+	    }.bind(this));
+	  },
 	  methods: {
 	    onchange: function onchange(event) {
 	      this.txtChange = event.value;
