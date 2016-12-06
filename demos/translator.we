@@ -23,13 +23,8 @@
         onfucus="onfucus"
       />
       <div class="tips" if="{{showback}}">
-        <!-- <div repeat="{{mtext in historyscore}}"> -->
-    <text repeat="{{mtext in historyscore}}">
-      {{mtext}}
-    </text>
-  </div>
-<!--         <text>{{tips}}</text>
-      </div> -->
+        <text>{{tips}}</text>
+      </div>
     </div>
      <!-- </div> -->
      <!-- 显示框 -->
@@ -130,9 +125,6 @@
 </style>
 
 <script>
-  // var word='';
-  // var num=0;
-  var storage = require('@weex-module/storage');
   var stream = require('@weex-module/stream');
 
   require('weex-components');
@@ -142,10 +134,8 @@
       txtChange: '',
       deviceHeight: 1024,
       tips:"这里是提示",
-      historyscore:[],
       content:'',
       others:[],
-      num:0,
       showback:false
     },
     created: function () {
@@ -167,14 +157,10 @@
       },
       onfocus:function(event) {
         this.showback=true;
-        console.log('onfucus')
-      },
+        },
       oninput: function(event) {
-        var self=this;
         this.txtInput = event.value;
         this.showback=true;
-        // var keyitem=[];
-        // var valueitem=[];
         console.log('oninput', event.value);
       },
       testClick:function(){
@@ -213,51 +199,24 @@
         this.txtChange = event.value;
         // var word=this.$el('youdao').attr.value;
         var word=this.txtChange;
-        self.num++;
         stream.fetch({
           method:'GET',
           type:'jsonp',
+          //url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=json&version=1.1&q='+word
+          //url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=xml&version=1.1&q='+word
           url:'http://fanyi.youdao.com/openapi.do?keyfrom=neverland&key=969918857&type=data&doctype=jsonp&callback=show&version=1.1&q='+word
         },function(ret){
+          console.log(ret)
+          console.log(ret.data);
           self.content=ret.data.translation[0];
-          // console.log(self.content);
+          console.log(self.content);
           self.others=ret.data.web;
 
-          // console.log(self.others)
+          console.log(self.others)
           self.translatecode=ret.status;
-          // console.log(self.translatecode)
+          console.log(self.translatecode)
 
           self.showback=false;
-          
-          // 设置缓存
-          
-          storage.setItem('foo',word,function(e){
-            // console.log(e)
-          });
-          storage.getItem('foo', function(e) {
-          console.log(e)
-            //callback.'e' is an object that contains 'result' and 'data'.
-            // use 'e.data' to fetch the value of the key,if not found,'undefined' will return.
-          });
-          // 取缓存,存到history中取
-          storage.getAllKeys(function(e){
-              console.log(e)
-              var keyitem=e.data;
-          //console.log(keyitem);
-          storage.length(function(e){
-            
-            self.length=e.data;
-            for(var i=0;i<self.length;i++){
-              storage.getItem(keyitem[i],function(e){
-                console.log(e)
-                // self.historyscore=+e.data;
-                self.historyscore.push(e.data);
-                //console.log('historyscore='+valueitem[i]);
-              });         
-            }
-            
-          });
-        })
           // self.translatescore=ret.data.translation;
         },function(ret1){
           

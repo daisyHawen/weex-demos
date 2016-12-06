@@ -1,0 +1,98 @@
+<template>
+	<div>
+	<div>
+		<input
+		id="uInput"
+		type="url"
+		autofocus="true"
+		placeholder="..."
+		value="zhangsan"
+		style="placeholder-color: #666666;font-size:40;">		
+	</input>
+	<wxc-button value="用户登陆" type="success" onclick="{{testClick}}"></wxc-button>
+	<text if="{{(response==='OK')}}">
+		已经成功提交数据！！！
+	</text>
+	</div>
+	<div>
+	<input
+		id="youdao"
+		type="url"
+		autofocus="true"
+		placeholder="..."
+		value="pig"
+		style="placeholder-color: #666666;font-size:40;">	
+	</input>
+	<wxc-button value="翻译" type="success" onclick="{{tanslate}}"></wxc-button>
+	<div if="{{(translatecode==200)}}" repeat="{{Item in translatescore}}">
+		<text>
+			{{Item}}
+		</text>
+	</div>
+	
+	</div>
+	</div>
+</template>
+
+<script>
+	var stream = require('@weex-module/stream');
+	require('weex-components');
+	module.exports={
+		data:{
+			response:'',
+			translatecode:0,
+			translatescore:[]
+		},
+		methods:{
+			testClick:function(){
+				var self = this;
+				console.log('testClick');
+				
+				var udata=this.$el('uInput').attr.value;
+				
+				stream.sendHttp({
+					method:'GET',
+					url:'http://192.168.1.124:8080/day04/login?uname='+udata
+				},function(ret){
+					self.response=ret;
+					//console.log(ret);
+					//console.log(self.response);
+				}
+				
+				);
+				
+				
+				console.log(this.response);
+				//storage
+				var storage = require('@weex-module/storage');
+				storage.setItem('name','张三',function(e){
+					console.log(e.result);
+					console.log(e.data);
+				});
+				storage.getItem('name',function(e){
+					console.log(e.result);
+					console.log(e.data);
+				});
+				
+			},
+			tanslate:function(){
+				var self = this;
+				var word=this.$el('youdao').attr.value;
+				stream.fetch({
+					method:'GET',
+					type:'jsonp',
+					//url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=json&version=1.1&q='+word
+					//url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=xml&version=1.1&q='+word
+					url:'http://fanyi.youdao.com/openapi.do?keyfrom=neverland&key=969918857&type=data&doctype=jsonp&callback=show&version=1.1&q='+word
+				},function(ret){
+					console.log(ret.data);
+					self.translatecode=ret.status;
+					self.translatescore=ret.data.translation;
+				},function(ret1){
+					
+				}
+				);
+			}	
+		}
+	}
+</script>

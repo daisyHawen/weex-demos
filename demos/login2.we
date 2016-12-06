@@ -1,0 +1,166 @@
+<template>
+	<div class="parent">
+  <image class="thumb" style="height:{{deviceHeight}}px" src="https://github.com/daisyHawen/weex-demos/blob/master/img/bg_6.jpg?raw=true"></image>
+<div class="content">
+	
+		<div class="tDiv">
+			<text class="tTitle">
+				用户登录
+			</text>
+		</div>
+		<div class="cDiv" style="margin-top:50">
+			<text class="cText">
+				用户名
+			</text>
+			<input class="cInput" id="uInput" type="text" autofocux="true" placeholder="默认用户名"
+			value="" maxlength="6"  oninput="Input" >
+				
+			</input>
+		</div>
+		<div class="cDiv" style="margin-bottom:50">
+			<text class="cText">
+				密码
+			</text>
+			<input class="cInput" id="pInput" type="password" autofocux="true" placeholder="不得少于六位"
+			  maxlength="6" oninput="Input" >
+				
+			</input>
+		</div>
+		<div class="tDiv">
+			<wxc-button value="用户登陆" type="success" onclick="{{testClick}}"></wxc-button>
+		</div>
+	</div>
+	</div>
+
+</template>
+<style>
+.parent{
+	position: relative;
+	/*top:200;*/
+	width:800;
+	height:auto;
+}
+.thumb{
+	width: 750; 
+	/*height: 1024; */
+	/*top:-200;*/
+	position: absolute;
+	top:0;
+	left:0;
+}
+.content{
+	position: absolute;
+	top:200;
+	width: inherit;
+	left:200;
+	/*flex-direction:row;*/
+	justify-content:center;
+	align-items:center;
+
+}
+.tDiv{
+	
+	width:inherit;
+	height:auto;
+	flex-direction:row;
+	justify-content:center;
+}
+.tTitle{
+	/*width:800;*/
+	width:inherit;
+	height:auto;
+	font-size:50;
+	justify-content:center;
+	align-items:center;
+	/*background-color:#ff0000;*/	
+}
+.cDiv{
+	/*width:800;*/
+	height:100;
+	flex-direction:row;
+	justify-content:center;
+	//background-color:#00ff00;
+	align-items:center;
+	/*margin-bottom: 10;*/
+	/*margin-top: 50*/
+
+	
+}
+.cText{
+	width:150;
+	height:auto;
+	font-size:32;
+
+	//background-color:#f00000;
+}
+.cInput{
+	width:200;
+	height:auto;
+	//placeholder-color:#0000ff;
+	align-items:center;
+	margin-left:10;
+	//background-color:#ffffff;
+	font-size:28;
+	padding-left:10;
+	padding-top:12;
+	padding-right:10;
+	padding-button:12;
+}
+</style>
+<script>
+	var udata='';
+	var pdata='';
+	var stream = require('@weex-module/stream');
+	require('weex-components');
+	module.exports={
+		data: {
+            deviceHeight: 1024,
+        },
+		created: function () {
+            var self = this;
+            this.$on('navRightClick', function (e) {
+                self.showMenu = true;
+            });
+
+            this.$getConfig(function (config) {
+                self.deviceHeight = 750 / config.env.deviceWidth * config.env.deviceHeight;
+                 // self.rotate();
+
+                // self.deviceHeight = 750 / config.env.deviceWidth * config.env.deviceHeight - 240
+            }.bind(this));
+
+        },
+		methods:{
+			testClick:function(){
+				var self = this;
+				console.log('testClick');
+				
+				//var udata=this.$el('uInput').attr.value;
+				//var pdata=this.$el('pInput').attr.value;
+				stream.sendHttp({
+					method:'GET',
+					url:'http://192.168.1.122:8080/day04/login?uname='+udata+'&upassword='+pdata
+				},function(ret){
+					self.response=ret;
+					//console.log(ret);
+					//console.log(self.response);
+				}
+				
+				);
+		
+				
+			},
+			
+			Input:function(){
+				udata=this.$el('uInput').attr.value;
+				pdata=this.$el('pInput').attr.value;
+			},
+			Change:function(){
+				udata=this.$el('uInput').attr.value;
+				pdata=this.$el('pInput').attr.value;
+			}
+			}
+	}
+	
+			
+</script>

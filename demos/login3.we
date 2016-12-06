@@ -1,0 +1,148 @@
+<template>
+	<div>
+	<div>
+		<input
+		id="uInput"
+		type="url"
+		autofocus="true"
+		placeholder="..."
+		value="zhangsan"
+		style="placeholder-color: #666666;font-size:40;">		
+	</input>
+	<wxc-button value="用户登陆" type="success" onclick="{{testClick}}"></wxc-button>
+	<text if="{{(response==='OK')}}">
+		已经成功提交数据！！！
+	</text>
+	</div>
+	<div>
+	<input
+		oninput="Input"
+		id="youdao"
+		type="text"
+		autofocus="true"
+		placeholder="输入单词"
+		
+		style="width:100; height:50; placeholder-color: #666666;font-size:40;">	
+	</input>
+	<wxc-button value="翻译" type="success" onclick="{{tanslate}}"></wxc-button>
+	<div if="{{(translatecode==200)}}" repeat="{{Item in translatescore}}">
+		<text>
+			{{Item}}
+		</text>
+		
+	</div>
+	<div>
+		<text >
+			历史记录
+		</text>
+	</div>
+	<div repeat="{{mtext in historyscore}}">
+		<text >
+			{{mtext}}
+		</text>
+	</div>
+	</div>
+	</div>
+</template>
+
+<script>
+	var word='';
+	var num=0;
+	var storage = require('@weex-module/storage');
+	var stream = require('@weex-module/stream');
+	require('weex-components');
+	module.exports={
+		data:{
+			response:'',
+			translatecode:0,
+			translatescore:[],
+			historyscore:[],
+			length:0
+		},
+		methods:{
+			
+			testClick:function(){
+				var self = this;
+				console.log('testClick');
+				
+				var udata=this.$el('uInput').attr.value;
+				
+				stream.sendHttp({
+					method:'GET',
+					url:'http://192.168.1.124:8080/day04/login?uname='+udata
+				},function(ret){
+					self.response=ret;
+					//console.log(ret);
+					//console.log(self.response);
+				}
+				
+				);
+				
+				
+				console.log(this.response);
+				
+			
+			
+				
+			},
+			tanslate:function(){
+				var keyitem=[];
+				var valueitem=[];
+				//var length=0;
+				//var j=1;
+				//for(;j<16;j++){
+				//	storage.removeItem(j,function(e){});
+				//}
+				//storage.removeItem('numbers',function(e){});
+				num++;
+				var self = this;
+				//console.log(word);
+				if(word!=''){
+						stream.fetch({
+					method:'GET',
+					type:'jsonp',
+					//url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=json&version=1.1&q='+word
+					//url:'http://fanyi.youdao.com/openapi.do?keyfrom=SkyHttpGetTest&key=545323935&type=data&doctype=xml&version=1.1&q='+word
+					url:'http://fanyi.youdao.com/openapi.do?keyfrom=neverland&key=969918857&type=data&doctype=jsonp&callback=show&version=1.1&q='+word
+				},function(ret){
+					//console.log(ret.data);
+					self.translatecode=ret.status;
+					self.translatescore=ret.data.translation;
+				},function(ret1){
+					
+				}
+				);
+				storage.setItem('numbers',word,function(e){});
+				storage.setItem(num,word,function(e){});
+				storage.getAllKeys(function(e){
+					
+					keyitem=e.data;
+					//console.log(keyitem);
+					storage.length(function(e){
+						
+						self.length=e.data;
+						for(var i=0;i<self.length;i++){
+							storage.getItem(keyitem[i],function(e){
+								//valueitem[i]=e.data;
+								//self.historyscore[i]=e.data;
+								self.historyscore.push(e.data);
+								//console.log('historyscore='+valueitem[i]);
+							});					
+						}
+						
+					});
+					
+				});
+				}else{
+					console.log("请输入单词");
+				}
+			
+				
+			},
+			Input:function(){
+				word=this.$el('youdao').attr.value;
+				//console.log(word);
+			}
+		}
+	}
+</script>
